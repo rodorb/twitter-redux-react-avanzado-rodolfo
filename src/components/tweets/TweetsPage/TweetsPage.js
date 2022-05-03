@@ -24,6 +24,7 @@ const useTweets = () => {
     // getLatestTweets().then(tweets => setTweets(tweets));
     const execute = async () => {
       const tweets = await getLatestTweets();
+      //TODO: dispatch redux action
       setTweets(tweets);
     };
     execute();
