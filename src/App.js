@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import LoginPage from './components/auth/LoginPage/LoginPage';
@@ -9,22 +8,13 @@ import TweetsPage from './components/tweets/TweetsPage/TweetsPage';
 import { AuthContextProvider } from './components/auth/context';
 import Layout from './components/layout/Layout';
 
-function App({ isInitiallyLogged }) {
-  const [isLogged, setIsLogged] = useState(isInitiallyLogged);
-
-  const handleLogin = () => {
-    setIsLogged(true);
-  };
-
-  const handleLogout = () => {
-    setIsLogged(false);
-  };
+function App() {
 
   return (
     <div className="App">
-      <AuthContextProvider value={{ isLogged, handleLogin, handleLogout }}>
+      <AuthContextProvider>
         <Routes>
-          <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/tweets" element={<Layout />}>
             <Route index element={<TweetsPage />} />
             <Route path=":tweetId" element={<TweetPage />} />

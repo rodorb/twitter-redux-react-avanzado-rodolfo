@@ -7,6 +7,9 @@ import { getLatestTweets } from '../service';
 
 import './TweetsPage.css';
 import styles from './TweetsPage.module.css';
+import { tweetsLoaded } from '../../../store/actions';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTweets } from '../../../store/selectors';
 
 const EmptyList = () => (
   <div style={{ textAlign: 'center' }}>
@@ -18,19 +21,12 @@ const EmptyList = () => (
 );
 
 const useTweets = () => {
-  const [tweets, setTweets] = useState([]);
-
+  //hooks de redux
+  const dispatch = useDispatch();
+  const tweets = useSelector(getTweets);
   useEffect(() => {
-    // getLatestTweets().then(tweets => setTweets(tweets));
-    const execute = async () => {
-      const tweets = await getLatestTweets();
-      //TODO: dispatch redux action
-      setTweets(tweets);
-    };
-    execute();
-
-    return () => {};
-  }, []);
+    dispatch(tweetsLoaded())
+  }, [dispatch]);
 
   return tweets;
 };

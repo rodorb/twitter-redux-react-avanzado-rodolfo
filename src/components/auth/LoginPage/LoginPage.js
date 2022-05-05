@@ -6,6 +6,9 @@ import { login } from '../service';
 import T from 'prop-types';
 
 import './LoginPage.css';
+import { connect, useDispatch, useSelector } from 'react-redux';
+import {  authLogin, authLoginFailure, authLoginRequest, authLoginSuccess, uiResetError } from '../../../store/actions';
+import { getUi } from '../../../store/selectors';
 
 function useRenders() {
   const count = useRef(1);
@@ -16,7 +19,7 @@ function useRenders() {
   return count.current;
 }
 
-function LoginPage({ onLogin }) {
+function LoginPage() {
   const renders = useRenders();
   const ref = useRef(null);
   const navigate = useNavigate();
@@ -26,8 +29,8 @@ function LoginPage({ onLogin }) {
     password: '',
     remember: false,
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+const dispatch = useDispatch();
+const {isLoading, error } = useSelector(getUi);
 
   useEffect(() => {
     console.log(ref.current);
@@ -46,22 +49,23 @@ function LoginPage({ onLogin }) {
     }));
   }, []);
 
-  const resetError = () => setError(null);
+  const resetError = () => dispatch(uiResetError());
 
   const handleSubmit = async event => {
     event.preventDefault();
-    try {
-      resetError();
-      setIsLoading(true);
-      await login(credentials);
-      setIsLoading(false);
-      onLogin();
+    dispatch(authLogin(credentials)).then(()=>{
       const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
-    } catch (error) {
-      setError(error);
-      setIsLoading(false);
-    }
+    });
+    // try {
+    //   dispatch(authLoginRequest());
+    //   await login(credentials);
+    //   dispatch(authLoginSuccess());
+    //   const from = location.state?.from?.pathname || '/';
+    //   navigate(from, { replace: true });
+    // } catch (error) {
+    //   dispatch(authLoginFailure(error));
+    // }
   };
 
   const buttonDisabled = useMemo(() => {
@@ -131,4 +135,11 @@ LoginPage.propTypes = {
   onLogin: T.func,
 };
 
+// const mapDispatchToProps = (dispatch) =>{
+//   return {
+//     onLogin: ()=> dispatch(authLogin())
+//   }
+// }
+
+// const ConnectedLoginPage = connect(null, mapDispatchToProps)(LoginPage)
 export default LoginPage;

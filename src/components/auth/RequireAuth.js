@@ -1,8 +1,7 @@
 import T from 'prop-types';
-import { useContext } from 'react';
+import { connect } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
-
-import AuthContext, { AuthContextConsumer } from './context';
+import { getIsLogged } from '../../store/selectors';
 
 const RequireAuth = ({ isLogged, children }) => {
   const location = useLocation();
@@ -19,11 +18,25 @@ RequireAuth.propTypes = {
   children: T.node,
 };
 
-const ConectedRequireAuth = props => (
-  <AuthContextConsumer>
-    {({ isLogged }) => <RequireAuth isLogged={isLogged} {...props} />}
-  </AuthContextConsumer>
-);
+const mapStateToProps = (state)=>{
+  return {
+    isLogged: getIsLogged(state),
+  }
+}
+
+//connect devuelve otra funcion a la que le paso el componente
+//que quiero conectar a Redux
+const ConectedRequireAuth = connect( 
+  mapStateToProps,
+  // mapDispatchToProps 
+)(RequireAuth);
+
+
+// const ConectedRequireAuth = props => (
+//   <AuthContextConsumer>
+//     {({ isLogged }) => <RequireAuth isLogged={isLogged} {...props} />}
+//   </AuthContextConsumer>
+// );
 
 // const ConectedRequireAuth = props => {
 //   const { isLogged } = useContext(AuthContext);
